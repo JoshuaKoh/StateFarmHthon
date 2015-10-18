@@ -393,6 +393,10 @@ public class QueryServiceImpl implements QueryService {
         return null;
     }
 
+    /**
+     * Converts users.txt files into a List of User objects
+     * @return List of all User objects
+     */
     private List<User> convertToUsers() {
 		try {
 			String[] userStr1 = reader.read( 1, "users.txt");
@@ -422,7 +426,10 @@ public class QueryServiceImpl implements QueryService {
 		return null;
     }
 
-    // TODO Terrible implementation
+    /**
+     * Converts mail.txt files into a List of Email objects
+     * @return List of all Email objects
+     */
     private List<Email> convertToEmails() {
     	try {
     		

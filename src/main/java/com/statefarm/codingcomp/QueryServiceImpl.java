@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -56,7 +57,22 @@ public class QueryServiceImpl implements QueryService {
     	
     	
     	for(Email m :emails) {
-    		String mailDay = m.getSent().toString().split("T")[0];
+    		Calendar cal = Calendar.getInstance();
+    		cal.setTime(m.getSent());
+    		String mailDay = "";
+    		mailDay += cal.get(Calendar.YEAR) + "-";
+    		int month = cal.get(Calendar.MONTH) + 1;
+    		if (month<10) {
+    			mailDay += "0" + month + "-";
+    		} else {
+    			mailDay += month + "-";
+    		}
+    		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+    		if (dayOfMonth < 10) {
+    			mailDay += "0" + dayOfMonth;
+    		} else {
+    			mailDay += dayOfMonth;
+    		}
     		if(emailsByDay.containsKey(mailDay)) {
     			emailsByDay.get(mailDay).add(m);
     		} else {
@@ -184,7 +200,34 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public String mostConnected() throws Exception {
         // TODO Auto-generated method stub
-        return null;
+    	Map<String, Integer> emailsSent = new HashMap<String, Integer>();
+    	for (User u : users) {
+    		String email = u.getEmail();
+    		Integer count = emailAddressesByDegrees(email, 1).size();
+    		emailsSent.put(email, count);
+    		
+    		
+//    		if (emailsSent.containsKey(email)) {
+//    			int number = emailsSent.get(email);
+//    			//emailsSent.remove(email);
+//    			emailsSent.put(email, number + 1 );
+//    			//System.out.println("HEY");
+//    		} else {
+//    			emailsSent.put(email, 0);
+//    		}
+    	}
+    	Entry<String,Integer> maxEntry = null;
+
+    	for(Entry<String,Integer> entry : emailsSent.entrySet()) {
+    		System.out.println(entry.getKey() + ":" + entry.getValue());
+    		//System.out.println(entry.getValue());
+    	    if (maxEntry == null || entry.getValue().intValue() > maxEntry.getValue().intValue()) {
+    	    	System.out.println("HEY");
+    	    	System.out.println(entry.getValue());
+    	        maxEntry = entry;
+    	    }
+    	}
+        return maxEntry.getKey();
     }
 
     @Override

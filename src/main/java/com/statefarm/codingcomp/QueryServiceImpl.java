@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,32 +52,50 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public Map<String, List<Email>> emailsByDay() throws Exception {
         // TODO Auto-generated method stub
-    	Map<String, List<Email>> emailsByDay = new HashMap<String, List<Email>>();
-    	
-    	
-    	for(Email m :emails) {
-    		String mailDay = m.getSent().toString().split("T")[0];
-    		if(emailsByDay.containsKey(mailDay)) {
-    			emailsByDay.get(mailDay).add(m);
-    		} else {
-    			emailsByDay.put(mailDay, new ArrayList<Email>());
-    			emailsByDay.get(mailDay).add(m);
-    		}
-    		
-    	}
-        return emailsByDay;
+        return null;
     }
 
     @Override
     public int emailsOnDay( Date date ) throws Exception {
-        // TODO Auto-generated method stub
-        return 0;
+        int emailCount = 0;
+
+        for (Email e : emails) {
+        	Date eDate = e.getSent();
+        	Calendar cal1 = Calendar.getInstance();
+        	Calendar cal2 = Calendar.getInstance();
+        	cal1.setTime(eDate);
+        	cal2.setTime(date);
+        	if (cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && 
+        			cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+        		emailCount++;
+        	}
+        }
+        return emailCount;
     }
 
     @Override
     public Map<User, List<Email>> emailsFromOurUsers() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	Map<User, List<Email>> emailsFrom = new HashMap<User, List<Email>>();
+    	List<Email> smallerEmails = emails;
+    	
+    	for (User u : users) {
+    		for (int emailIndex = 0; emailIndex < smallerEmails.size(); ) {
+    			Email e = smallerEmails.get(emailIndex);
+    			if (e.getFrom().equals(u.getEmail())) {
+    				if (emailsFrom.containsKey(u)) {
+    					emailsFrom.get(u).add(e);
+    				} else {
+    					List<Email> userMail = new ArrayList<Email>();
+    					userMail.add(e);
+    					emailsFrom.put(u, userMail);
+    				}
+    				smallerEmails.remove(emailIndex);
+    			} else {
+    				emailIndex++;
+    			}
+    		}
+    	}
+        return emailsFrom;
     }
 
     @Override

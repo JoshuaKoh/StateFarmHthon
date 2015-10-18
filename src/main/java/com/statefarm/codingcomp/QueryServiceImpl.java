@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -50,7 +51,20 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public Map<String, List<Email>> emailsByDay() throws Exception {
         // TODO Auto-generated method stub
-        return null;
+    	Map<String, List<Email>> emailsByDay = new HashMap<String, List<Email>>();
+    	
+    	
+    	for(Email m :emails) {
+    		String mailDay = m.getSent().toString().split("T")[0];
+    		if(emailsByDay.containsKey(mailDay)) {
+    			emailsByDay.get(mailDay).add(m);
+    		} else {
+    			emailsByDay.put(mailDay, new ArrayList<Email>());
+    			emailsByDay.get(mailDay).add(m);
+    		}
+    		
+    	}
+        return emailsByDay;
     }
 
     @Override

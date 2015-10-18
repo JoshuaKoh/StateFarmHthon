@@ -20,15 +20,17 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public List<User> usersByDomain( String domain ) throws Exception {
-    	String[] st = reader.read(1, "mail.txt");
-//    	for (String s : st) {
-//    		System.out.println(s);
-//    	}
-    	List<Email> em = convertToEmails(st);
-    	for (Email e : em) {
-    		System.out.println(e.getFrom());
-    	}
-    	return null;
+		List<User> users = covertToUsers(reader.read( 1, "users.txt"));
+        List<User> matchingUsers = new ArrayList<User>();
+
+        for (User u: users) {
+        	String userDomain = u.getEmail().split("@")[1];
+        	if (domain.equalsIgnoreCase(userDomain)) {
+        		matchingUsers.add(u);
+        	}
+        }
+
+        return matchingUsers;
     }
 
     @Override
@@ -156,7 +158,7 @@ public class QueryServiceImpl implements QueryService {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     private List<User> convertToUsers(String[] userStr) {
     	List<User> users = new ArrayList<User>();
     	Scanner sc;
@@ -171,7 +173,7 @@ public class QueryServiceImpl implements QueryService {
     	}
 		return users;
     }
-    
+
     // TODO Terrible implementation
     private List<Email> convertToEmails(String[] emailStr) throws ParseException {
     	List<Email> emails = new ArrayList<Email>();
@@ -189,5 +191,5 @@ public class QueryServiceImpl implements QueryService {
     	}
     	return emails;
     }
-    
+
 }

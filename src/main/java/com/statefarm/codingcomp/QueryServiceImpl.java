@@ -201,29 +201,27 @@ public class QueryServiceImpl implements QueryService {
     public String mostConnected() throws Exception {
         // TODO Auto-generated method stub
     	Map<String, Integer> emailsSent = new HashMap<String, Integer>();
-    	for (User u : users) {
-    		String email = u.getEmail();
-    		Integer count = emailAddressesByDegrees(email, 1).size();
-    		emailsSent.put(email, count);
-    		
-    		
-//    		if (emailsSent.containsKey(email)) {
-//    			int number = emailsSent.get(email);
-//    			//emailsSent.remove(email);
-//    			emailsSent.put(email, number + 1 );
-//    			//System.out.println("HEY");
-//    		} else {
-//    			emailsSent.put(email, 0);
-//    		}
+    	
+    	for (Email e : emails) {
+			
+				String email = e.getTo();
+				if (!emailsSent.containsKey(email)) {
+	    			Integer count = emailAddressesByDegrees(email, 1).size();
+	        		emailsSent.put(email, count);
+	    		}
+		
+				email = e.getFrom();
+				if (!emailsSent.containsKey(email)) {
+	    			Integer count = emailAddressesByDegrees(email, 1).size();
+	        		emailsSent.put(email, count);
+	    		}
+    	
     	}
     	Entry<String,Integer> maxEntry = null;
 
     	for(Entry<String,Integer> entry : emailsSent.entrySet()) {
-    		System.out.println(entry.getKey() + ":" + entry.getValue());
-    		//System.out.println(entry.getValue());
+    		
     	    if (maxEntry == null || entry.getValue().intValue() > maxEntry.getValue().intValue()) {
-    	    	System.out.println("HEY");
-    	    	System.out.println(entry.getValue());
     	        maxEntry = entry;
     	    }
     	}

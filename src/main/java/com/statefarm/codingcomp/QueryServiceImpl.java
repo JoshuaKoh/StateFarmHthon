@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -129,7 +130,7 @@ public class QueryServiceImpl implements QueryService {
     public List<Email> emailsToUserFromUser() throws Exception {
     	List<Email> fromUserToUser = new ArrayList<Email>();
     	
-    	for (Email e : emails ) {
+    	for (Email e : emails) {
     		if (users.contains(new User(e.getFrom())) && users.contains(new User(e.getTo()))) {
     			fromUserToUser.add(e);
     		}
@@ -139,14 +140,45 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public Set<String> emailAddressesByDegrees( String email, int degrees ) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	Set<String> returning = new HashSet<String>();
+    	returning.add(email);
+    	
+    	for (int i = degrees; i > 0; i--) {
+    		Set<String> emailTemp = new HashSet<String>();
+	    		for (String s : returning) {
+	    			for (Email e : emails) {
+	    				if (s.equals(e.getFrom())) {
+	    					emailTemp.add(e.getTo());
+	    				}
+	    				if (s.equals(e.getTo())) {
+	    					emailTemp.add(e.getFrom());
+	    				}
+	    			}
+	    		}
+	    		for (String s : emailTemp) {
+	    			returning.add(s);
+	    		}
+    	}
+    	return returning;
     }
-
+    
     @Override
     public int degreesBetween( String emailAddressOne, String emailAddressTwo ) throws Exception {
-        // TODO Auto-generated method stub
-        return 0;
+    	int degrees = 1;
+    	Set<String> emails = emailAddressesByDegrees(emailAddressOne, degrees);
+    	int oldNum = emails.size();
+    	int newNum = 0;
+    	
+    	while (oldNum != newNum) {
+    		if (emails.contains(emailAddressTwo)) {
+    			return degrees;
+    		}
+    		degrees++;
+    		emails = emailAddressesByDegrees(emailAddressOne, degrees);
+    		oldNum = newNum;
+    		newNum = emails.size();
+    	}
+        return -1;
     }
 
     @Override
@@ -157,26 +189,91 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public String mostActiveSender() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	String maxUsr = "";
+    	int max = 0;
+    	for (Email e : emails) {
+    		int userCount = 0;
+    		String newUser = e.getFrom();
+    		for (Email em : emails)  {
+    			if (em.getFrom().equals(newUser)) {
+    				userCount++;
+    			}
+    		}
+    		if (userCount > max) {
+    			maxUsr = newUser;
+    			max = userCount;
+    		}
+    	}
+        return maxUsr;
     }
 
     @Override
     public String mostActiveReceiver() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	String maxUsr = "";
+    	int max = 0;
+    	for (Email e : emails) {
+    		int userCount = 0;
+    		String newUser = e.getTo();
+    		for (Email em : emails)  {
+    			if (em.getTo().equals(newUser)) {
+    				userCount++;
+    			}
+    		}
+    		if (userCount > max) {
+    			maxUsr = newUser;
+    			max = userCount;
+    		}
+    	}
+        return maxUsr;
     }
 
     @Override
     public String mostSingularSender() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	String maxUsr = "";
+    	int max = 0;
+    	for (Email e : emails) {
+    		int userCount = 0;
+    		String newUser = e.getFrom();
+    		Map<String, Integer> newUserSent = new HashMap<String, Integer>();
+    		for (Email em : emails)  {
+    			if (em.getFrom().equals(newUser)) {
+    				if (newUserSent.containsKey(em.getTo())) {
+    					Integer count = newUserSent.get(em.getTo());
+    					count++;
+    					newUserSent.put(em.getFrom(), count);
+    				} else {
+    					newUserSent.put(em.getFrom(), new Integer(1));
+    				}
+    			}
+    		}
+    		for (Integer i : newUserSent.values()) {
+    			if (i > max) {
+    				maxUsr = newUser;
+    				max = userCount;
+    			}
+    		}
+    	}
+        return maxUsr;
     }
 
     @Override
     public String mostSelfEmails() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	String maxUsr = "";
+    	int max = 0;
+    	for (Email e : emails) {
+    		int userCount = 0;
+    		String newUser = e.getTo();
+    		for (Email em : emails)  {
+    			if (em.getTo().equals(newUser) && em.getFrom().equals(newUser)) {
+    				userCount++;
+    			}
+    		}
+    		if (userCount > max) {
+    			maxUsr = newUser;
+    			max = userCount;
+    		}
+    	}
+        return maxUsr;
     }
 
     @Override

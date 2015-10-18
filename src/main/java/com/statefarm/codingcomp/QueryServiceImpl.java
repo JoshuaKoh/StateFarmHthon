@@ -199,7 +199,7 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public String mostConnected() throws Exception {
-        // TODO Auto-generated method stub
+
     	Map<String, Integer> emailsSent = new HashMap<String, Integer>();
     	
     	for (Email e : emails) {

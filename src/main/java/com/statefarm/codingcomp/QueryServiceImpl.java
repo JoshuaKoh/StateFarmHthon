@@ -281,9 +281,9 @@ public class QueryServiceImpl implements QueryService {
     				if (newUserSent.containsKey(em.getTo())) {
     					Integer count = newUserSent.get(em.getTo());
     					count++;
-    					newUserSent.put(em.getFrom(), count);
+    					newUserSent.put(em.getTo(), count);
     				} else {
-    					newUserSent.put(em.getFrom(), new Integer(1));
+    					newUserSent.put(em.getTo(), new Integer(1));
     				}
     			}
     		}
@@ -319,8 +319,22 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public int mostPopularHour() throws Exception {
-        // TODO Auto-generated method stub
-        return 0;
+    	int[] hourCount = new int[24];
+    	for (Email e : emails) {
+    		Calendar cal = Calendar.getInstance();
+    		cal.setTime(e.getSent());
+    		int hour = cal.get(Calendar.HOUR_OF_DAY);
+    		hourCount[hour] = hourCount[hour] + 1;
+    	}
+    	int max = 0;
+    	int returning = 0;
+    	for (int i = 0; i < hourCount.length; i++) {
+    		if (hourCount[i] > max) {
+    			max = hourCount[i];
+    			returning = i;
+    		}
+    	}
+    	return returning;
     }
 
     @Override
@@ -331,8 +345,22 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public int leastPopularHour() throws Exception {
-        // TODO Auto-generated method stub
-        return 0;
+    	int[] hourCount = new int[24];
+    	for (Email e : emails) {
+    		Calendar cal = Calendar.getInstance();
+    		cal.setTime(e.getSent());
+    		int hour = cal.get(Calendar.HOUR_OF_DAY);
+    		hourCount[hour] = hourCount[hour] + 1;
+    	}
+    	int min = Integer.MAX_VALUE;
+    	int returning = 0;
+    	for (int i = 0; i < hourCount.length; i++) {
+    		if (hourCount[i] < min) {
+    			min = hourCount[i];
+    			returning = i;
+    		}
+    	}
+    	return returning;
     }
 
     @Override

@@ -88,11 +88,9 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public Map<User, List<Email>> emailsFromOurUsers() throws Exception {
     	Map<User, List<Email>> emailsFrom = new HashMap<User, List<Email>>();
-    	List<Email> smallerEmails = emails;
     	
     	for (User u : users) {
-    		for (int emailIndex = 0; emailIndex < smallerEmails.size(); ) {
-    			Email e = smallerEmails.get(emailIndex);
+    		for (Email e : emails) {
     			if (e.getFrom().equals(u.getEmail())) {
     				if (emailsFrom.containsKey(u)) {
     					emailsFrom.get(u).add(e);
@@ -101,10 +99,7 @@ public class QueryServiceImpl implements QueryService {
     					userMail.add(e);
     					emailsFrom.put(u, userMail);
     				}
-    				smallerEmails.remove(emailIndex);
-    			} else {
-    				emailIndex++;
-    			}
+    			} 
     		}
     	}
         return emailsFrom;
@@ -112,14 +107,34 @@ public class QueryServiceImpl implements QueryService {
 
     @Override
     public Map<User, List<Email>> emailsToOurUsers() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	Map<User, List<Email>> emailsTo = new HashMap<User, List<Email>>();
+    	
+    	for (User u : users) {
+    		for (Email e : emails) {
+    			if (e.getTo().equals(u.getEmail())) {
+    				if (emailsTo.containsKey(u)) {
+    					emailsTo.get(u).add(e);
+    				} else {
+    					List<Email> userMail = new ArrayList<Email>();
+    					userMail.add(e);
+    					emailsTo.put(u, userMail);
+    				}
+    			}
+    		}
+    	}
+        return emailsTo;
     }
 
     @Override
     public List<Email> emailsToUserFromUser() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    	List<Email> fromUserToUser = new ArrayList<Email>();
+    	
+    	for (Email e : emails ) {
+    		if (users.contains(new User(e.getFrom())) && users.contains(new User(e.getTo()))) {
+    			fromUserToUser.add(e);
+    		}
+    	}
+        return fromUserToUser;
     }
 
     @Override
